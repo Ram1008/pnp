@@ -1,0 +1,31 @@
+@import url('https://fonts.googleapis.com/css2?family=Lora:ital,wght@0,400..700;1,400..700&display=swap');
+@import 'tailwindcss';
+
+:root {
+  --primary: #ffffff;
+  --dark: #171717;
+  --secondary: #00DFE1;
+}
+
+body {
+  background: var(--primary);
+  font-family: Arial, Helvetica, sans-serif;
+}
+
+.color-secondary {
+  color: var(--secondary);
+}
+
+.font-lora {
+  font-family: "Lora", serif;
+}
+
+/* Hide scrollbar but allow scroll */
+.hide-scrollbar {
+  scrollbar-width: none; /* Firefox */
+  -ms-overflow-style: none; /* IE and Edge */
+}
+
+.hide-scrollbar::-webkit-scrollbar {
+  display: none; /* Chrome, Safari */
+}

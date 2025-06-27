@@ -1,0 +1,209 @@
+"use client";
+import React, { useRef, useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+
+const Stationary = () => {
+  const scrollRef1 = useRef(null);
+  const scrollRef2 = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
+
+  const stationaryItems = [
+    {
+      title: "A4 Single Line Notebook",
+      pages: "172-200 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A4 Single Line Notebook",
+      pages: "250-300 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A4 Single Line Spiral Bound",
+      pages: "172-200 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "A4 Single Line Spiral Bound",
+      pages: "250-300 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "A4 Unruled Spiral Bound",
+      pages: "100-150 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "Single Line Long Notebook",
+      pages: "172-200 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A5 Single Line Notebook",
+      pages: "100-150 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A5 Single Line Spiral Bound",
+      pages: "100-150 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "A4 Ruled Notebook",
+      pages: "150-200 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A5 Unruled Notebook",
+      pages: "100-150 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A4 Graph Notebook",
+      pages: "150-200 pages",
+      image: "/notebook.png",
+    },
+    {
+      title: "A5 Graph Notebook",
+      pages: "100-150 pages",
+      image: "/notebook.png",
+    },
+  ];
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      checkArrows();
+    };
+
+    // Set initial value
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleScroll = (direction) => {
+    const scrollAmount = isMobile
+      ? scrollRef1.current.offsetWidth / 3
+      : scrollRef1.current.offsetWidth / 6;
+
+    [scrollRef1.current, scrollRef2.current].forEach((ref) => {
+      if (ref) {
+        ref.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    });
+
+    setTimeout(() => {
+      checkArrows();
+    }, 300);
+  };
+
+  const checkArrows = () => {
+    if (scrollRef1.current) {
+      const container = scrollRef1.current;
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollLeft < container.scrollWidth - container.offsetWidth
+      );
+    }
+  };
+
+  return (
+    <div className="relative mt-4">
+      {/* Left Arrow - Only show on mobile */}
+      {isMobile && showLeftArrow && (
+        <button
+          onClick={() => handleScroll("left")}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100"
+        >
+          <ChevronLeft className="w-5 h-5 text-[#5d3d72]" />
+        </button>
+      )}
+
+      {/* First Row */}
+      <div
+        ref={scrollRef1}
+        onScroll={checkArrows}
+        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {stationaryItems.slice(0, 6).map((item, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0"
+            style={{
+              minWidth: isMobile
+                ? "calc(33.333% - 16px)"
+                : "calc(16.666% - 16px)",
+            }}
+          >
+            <div className="h-40 w-24 hbg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="px-1 flex justify-center bg-[#f0eef6]">
+                <img src={item.image} alt="" className="h-20 object-contain" />
+              </div>
+              <div className="p-1 border-t border-gray-100">
+                <h4 className="font-medium text-xs sm:text-sm text-[#5d3d72] text-center">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-gray-500 text-center mt-1">
+                  {item.pages}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Second Row */}
+      <div
+        ref={scrollRef2}
+        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {stationaryItems.slice(6, 12).map((item, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0"
+            style={{
+              minWidth: isMobile
+                ? "calc(33.333% - 16px)"
+                : "calc(16.666% - 16px)",
+            }}
+          >
+            <div className="h-40 w-24 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
+              <div className="px-1  flex justify-center bg-[#f0eef6]">
+                <img src={item.image} alt="" className="h-20 object-contain" />
+              </div>
+              <div className="p-1 border-t border-gray-100">
+                <h4 className="font-medium text-xs sm:text-sm text-[#5d3d72] text-center">
+                  {item.title}
+                </h4>
+                <p className="text-xs text-gray-500 text-center mt-1">
+                  {item.pages}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Right Arrow - Only show on mobile */}
+      {isMobile && showRightArrow && (
+        <button
+          onClick={() => handleScroll("right")}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100"
+        >
+          <ChevronRight className="w-5 h-5 text-[#5d3d72]" />
+        </button>
+      )}
+    </div>
+  );
+};
+
+export default Stationary;
