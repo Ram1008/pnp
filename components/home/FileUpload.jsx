@@ -6,10 +6,7 @@ import {
   X,
   Upload,
   Image as ImageIcon,
-  Plus,
-  ShieldCheck,
 } from "lucide-react";
-import Image from "next/image";
 import Uploading from "../Uploading";
 import FilesPreview from "../FilesPreview";
 

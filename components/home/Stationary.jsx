@@ -115,7 +115,7 @@ const Stationary = () => {
   };
 
   return (
-    <div className="relative mt-4">
+    <div className="relative">
       {/* Left Arrow - Only show on mobile */}
       {isMobile && showLeftArrow && (
         <button
@@ -138,20 +138,19 @@ const Stationary = () => {
             key={index}
             className="flex-shrink-0"
             style={{
-              minWidth: isMobile
-                ? "calc(33.333% - 16px)"
-                : "calc(16.666% - 16px)",
+              width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+              minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
             }}
           >
-            <div className="h-40 w-24 hbg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="px-1 flex justify-center bg-[#f0eef6]">
-                <img src={item.image} alt="" className="h-20 object-contain" />
+            <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden ">
+              <div className=" flex justify-center bg-[#C4BADF]">
+                <img src={item.image} alt="" className="h-[68px] object-contain" />
               </div>
-              <div className="p-1 border-t border-gray-100">
-                <h4 className="font-medium text-xs sm:text-sm text-[#5d3d72] text-center">
+              <div className="pt-1 ">
+                <h4 className=" text-[10px] text-black text-center leading-3.5">
                   {item.title}
                 </h4>
-                <p className="text-xs text-gray-500 text-center mt-1">
+                <p className="text-[10px] text-gray-500 text-center mt-1 leading-2">
                   {item.pages}
                 </p>
               </div>
@@ -171,20 +170,19 @@ const Stationary = () => {
             key={index}
             className="flex-shrink-0"
             style={{
-              minWidth: isMobile
-                ? "calc(33.333% - 16px)"
-                : "calc(16.666% - 16px)",
+              width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+              minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
             }}
           >
-            <div className="h-40 w-24 bg-white rounded-lg overflow-hidden shadow-sm border border-gray-200 hover:shadow-md transition-shadow">
-              <div className="px-1  flex justify-center bg-[#f0eef6]">
-                <img src={item.image} alt="" className="h-20 object-contain" />
+            <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden ">
+              <div className="px-1 flex justify-center bg-[#C4BADF]">
+                <img src={item.image} alt="" className="h-[68px] object-contain" />
               </div>
               <div className="p-1 border-t border-gray-100">
-                <h4 className="font-medium text-xs sm:text-sm text-[#5d3d72] text-center">
+                <h4 className="font-medium text-[10px] text-black text-center">
                   {item.title}
                 </h4>
-                <p className="text-xs text-gray-500 text-center mt-1">
+                <p className="text-[10px] text-gray-500 text-center">
                   {item.pages}
                 </p>
               </div>

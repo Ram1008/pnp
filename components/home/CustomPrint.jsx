@@ -1,183 +1,168 @@
 "use client";
-import React from "react";
-import { useRouter } from "next/navigation";
+import React, { useRef, useState, useEffect } from "react";
+import { ChevronLeft, ChevronRight } from "lucide-react";
+import productData from "@/constants/productData";
 
-const CustomPrint = ({
-  filesPresent,
-  files,
-  setFiles,
-  currentFileIndex,
-  setCurrentFileIndex,
-  printSettings,
-  setPrintSettings,
-}) => {
-  const router = useRouter();
+const CustomPrint = () => {
+  const scrollRef1 = useRef(null);
+  const scrollRef2 = useRef(null);
+  const [showLeftArrow, setShowLeftArrow] = useState(false);
+  const [showRightArrow, setShowRightArrow] = useState(true);
+  const [isMobile, setIsMobile] = useState(false);
 
-  const handleSettingChange = (setting, value) => {
-    const newSettings = {
-      ...printSettings,
-      [setting]: value,
+  // Get all items from all categories
+  const allItems = productData.flatMap((category) =>
+    category.items.map((item) => ({
+      ...item,
+      category: category.category,
+      image: `/custom-print/${item.name
+        .toLowerCase()
+        .replace(/\s+/g, "-")}.png`, // Example image path
+    }))
+  );
+
+  useEffect(() => {
+    const handleResize = () => {
+      setIsMobile(window.innerWidth <= 768);
+      checkArrows();
     };
-    setPrintSettings(newSettings);
 
-    setFiles((prevFiles) =>
-      prevFiles.map((file) => ({
-        ...file,
-        printSettings: { ...newSettings },
-        price: calculatePrintPrice(file.pages, newSettings),
-      }))
-    );
+    // Set initial value
+    handleResize();
+
+    window.addEventListener("resize", handleResize);
+    return () => window.removeEventListener("resize", handleResize);
+  }, []);
+
+  const handleScroll = (direction) => {
+    const scrollAmount = isMobile
+      ? scrollRef1.current.offsetWidth / 3
+      : scrollRef1.current.offsetWidth / 6;
+
+    [scrollRef1.current, scrollRef2.current].forEach((ref) => {
+      if (ref) {
+        ref.scrollBy({
+          left: direction === "left" ? -scrollAmount : scrollAmount,
+          behavior: "smooth",
+        });
+      }
+    });
+
+    setTimeout(() => {
+      checkArrows();
+    }, 300);
   };
 
-  const calculatePrintPrice = (pages, settings) => {
-    const pricePerPage = settings.colorMode === "Color" ? 10 : 3;
-    let price = pages * pricePerPage * settings.copies;
-
-    if (settings.printSide === "Double Sided") {
-      price *= 0.8;
+  const checkArrows = () => {
+    if (scrollRef1.current) {
+      const container = scrollRef1.current;
+      setShowLeftArrow(container.scrollLeft > 0);
+      setShowRightArrow(
+        container.scrollLeft < container.scrollWidth - container.offsetWidth
+      );
     }
-
-    return Math.round(price);
   };
-
-  if (!filesPresent) {
-    return (
-      <div className="h-[140px] flex justify-center items-center py-4 border border-gray-200 rounded-xl shadow-sm">
-        Please Upload files to see custom options
-      </div>
-    );
-  }
 
   return (
-    <div className="py-4 mb-2 border border-gray-200 shadow-sm px-2 rounded-xl">
-      <div className="space-y-6">
-        {/* Paper Size */}
-        <div className="flex justify-between items-center border-b border-b-gray-200 py-4">
-          <div>
-            <h3 className="font-semibold text-sm">Paper Size</h3>
-          </div>
-          <div className="flex gap-2">
-            {["A4", "A5", "Letter", "Legal"].map((size) => (
-              <button
-                key={size}
-                onClick={() => handleSettingChange("paperSize", size)}
-                className={`px-3 py-1 rounded border text-sm ${
-                  printSettings.paperSize === size
-                    ? "border-[#5d3d72] bg-green-50 text-[#5d3d72]"
-                    : "border-gray-300"
-                }`}
-              >
-                {size}
-              </button>
-            ))}
-          </div>
-        </div>
+    <div className="relative">
+      {/* Left Arrow - Only show on mobile */}
+      {isMobile && showLeftArrow && (
+        <button
+          onClick={() => handleScroll("left")}
+          className="absolute left-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100"
+        >
+          <ChevronLeft className="w-5 h-5 text-[#5d3d72]" />
+        </button>
+      )}
 
-        {/* Page Range */}
-        <div className="flex  border-b border-b-gray-200 py-4">
-          <h3 className="font-semibold text-sm mb-0">Page Range</h3>
-          <input
-            type="text"
-            placeholder="All pages"
-            value={printSettings.pageRange}
-            className="w-full px-3 py-2 border border-gray-300 rounded"
-            onChange={(e) => handleSettingChange("pageRange", e.target.value)}
-          />
-        </div>
-
-        {/* Binding Type */}
-        <div className="flex justify-between border-b border-b-gray-200 py-4">
-          <div>
-            <h3 className="font-semibold text-sm">Binding Type</h3>
+      {/* First Row */}
+      <div
+        ref={scrollRef1}
+        onScroll={checkArrows}
+        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {allItems.slice(0, 6).map((item, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0"
+            style={{
+              width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+              minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+            }}
+          >
+            <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden">
+              <div className="flex justify-center bg-[#C4BADF]">
+                <img
+                  src={item.image || "/custom-print/default.png"}
+                  alt={""}
+                  className="h-[68px] object-contain"
+                  onError={(e) => {
+                    e.target.src = "/custom-print/default.png"; // Fallback image
+                  }}
+                />
+              </div>
+              <div className="pt-1">
+                <h4 className="text-[10px] text-black text-center leading-3.5">
+                  {item.name}
+                </h4>
+                <p className="text-[10px] text-gray-500 text-center mt-1 leading-2">
+                  {item.category}
+                </p>
+              </div>
+            </div>
           </div>
-          <div className="flex gap-2">
-            {["Stapling", "Spiral", "Perfect"].map((type) => (
-              <button
-                key={type}
-                onClick={() =>
-                  handleSettingChange("bindingType", type.toLowerCase())
-                }
-                className={`px-3 py-1 rounded border text-sm ${
-                  printSettings.bindingType === type.toLowerCase()
-                    ? "border-[#5d3d72] bg-green-50 text-[#5d3d72]"
-                    : "border-gray-300"
-                }`}
-              >
-                {type}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Print Quality */}
-        <div className="flex justify-between border-b border-b-gray-200 py-4">
-          <div>
-            <h3 className="font-semibold text-sm">Print Quality</h3>
-          </div>
-          <div className="flex gap-2">
-            {["Standard", "High", "Premium"].map((quality) => (
-              <button
-                key={quality}
-                onClick={() =>
-                  handleSettingChange("quality", quality.toLowerCase())
-                }
-                className={`px-3 py-1 rounded border text-sm ${
-                  printSettings.quality === quality.toLowerCase()
-                    ? "border-[#5d3d72] bg-green-50 text-[#5d3d72]"
-                    : "border-gray-300"
-                }`}
-              >
-                {quality}
-              </button>
-            ))}
-          </div>
-        </div>
-
-        {/* Additional Options */}
-        <div className="space-y-3">
-          <h3 className="font-semibold text-sm">Additional Options</h3>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="collate"
-              className="mr-2"
-              checked={printSettings.collate}
-              onChange={(e) => handleSettingChange("collate", e.target.checked)}
-            />
-            <label htmlFor="collate" className="text-sm">
-              Collate copies
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="stapling"
-              className="mr-2"
-              checked={printSettings.stapling}
-              onChange={(e) =>
-                handleSettingChange("stapling", e.target.checked)
-              }
-            />
-            <label htmlFor="stapling" className="text-sm">
-              Stapling
-            </label>
-          </div>
-          <div className="flex items-center">
-            <input
-              type="checkbox"
-              id="holePunch"
-              className="mr-2"
-              checked={printSettings.holePunch}
-              onChange={(e) =>
-                handleSettingChange("holePunch", e.target.checked)
-              }
-            />
-            <label htmlFor="holePunch" className="text-sm">
-              Hole Punch
-            </label>
-          </div>
-        </div>
+        ))}
       </div>
+
+      {/* Second Row */}
+      <div
+        ref={scrollRef2}
+        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
+      >
+        {allItems.slice(6, 12).map((item, index) => (
+          <div
+            key={index}
+            className="flex-shrink-0"
+            style={{
+              width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+              minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
+            }}
+          >
+            <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden">
+              <div className="px-1 flex justify-center bg-[#C4BADF]">
+                <img
+                  src={item.image}
+                  alt={""}
+                  className="h-[68px] object-contain"
+                  onError={(e) => {
+                    e.target.src = "/custom-print/default.png"; // Fallback image
+                  }}
+                />
+              </div>
+              <div className="p-1 border-t border-gray-100">
+                <h4 className="font-medium text-[10px] text-black text-center">
+                  {item.name}
+                </h4>
+                <p className="text-[10px] text-gray-500 text-center">
+                  {item.category}
+                </p>
+              </div>
+            </div>
+          </div>
+        ))}
+      </div>
+
+      {/* Right Arrow - Only show on mobile */}
+      {isMobile && showRightArrow && (
+        <button
+          onClick={() => handleScroll("right")}
+          className="absolute right-0 top-1/2 -translate-y-1/2 z-10 bg-white p-2 rounded-full shadow-md border border-gray-200 hover:bg-gray-100"
+        >
+          <ChevronRight className="w-5 h-5 text-[#5d3d72]" />
+        </button>
+      )}
     </div>
   );
 };

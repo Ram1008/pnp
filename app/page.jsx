@@ -8,6 +8,7 @@ import { ChevronRight, Search, Printer, Settings } from "lucide-react";
 import Link from "next/link";
 import CustomPrint from "@/components/home/CustomPrint";
 import CategoriesSection from "@/components/home/CategoriesSection";
+import StationaryCategoriesSection from "@/components/home/StationaryCategorySection";
 
 const Page = () => {
   const [activeTab, setActiveTab] = useState("stationary");
@@ -36,7 +37,7 @@ const Page = () => {
     <div className="h-full bg-white relative">
       <Header />
 
-      <div className="max-w-screen-lg mx-auto px-1.5 py-4">
+      <div className="max-w-screen-lg mx-auto px-1.5 py-2">
         <section className="flex flex-col justify-center items-center bg-[#f0eef6] rounded-xl shadow-md border border-gray-200 p-3 mx-4">
           {!filesPresent && (
             <>
@@ -68,7 +69,7 @@ const Page = () => {
           />
         </section>
 
-        <section className="p-3 mt-2 mb-10 mx-2">
+        <section className="p-3 mt-2 mx-2">
           <div className="flex flex-col justify-between items-center mb-2">
             <div className="flex space-x-2">
               <button
@@ -79,19 +80,19 @@ const Page = () => {
                     : "text-[#5d3d72]"
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 text-sm">
                   Stationary
                 </div>
               </button>
               <button
                 onClick={() => setActiveTab("customPrint")}
-                className={`text-md font-semibold p-4 border border-gray-300 rounded-xl ${
+                className={`text-md font-semibold px-2 border border-gray-300 rounded-xl ${
                   activeTab === "customPrint"
                     ? "bg-[#5d3d72] text-white"
                     : "text-[#5d3d72]"
                 }`}
               >
-                <div className="flex items-center gap-2">
+                <div className="flex items-center gap-2 w-[80px] text-sm">
                   {/* <Settings className="h-5 w-5" /> */}
                   Custom Print
                 </div>
@@ -99,15 +100,34 @@ const Page = () => {
             </div>
           </div>
 
-          {activeTab === "stationary" && <CategoriesSection /> && (
-            <div className="relative w-full mt-3 flex justify-center items-center">
-              <input
-                type="text"
-                placeholder="Search events by name or game title"
-                className="w-full border border-gray-300 rounded-md pl-9 py-2.5 text-sm focus:outline-none focus:ring-1 focus:ring-[#5d3d72] focus:border-[#5d3d72] placeholder:text-gray-400"
-              />
-              <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
-            </div>
+          {activeTab === "stationary" && (
+            <>
+              <div className="relative w-full mt-3 flex justify-center items-center">
+                <input
+                  type="text"
+                  placeholder="Search events by name or game title"
+                  className="w-full bg-gray-100 border border-gray-300 rounded-md pl-9 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#5d3d72] focus:border-[#5d3d72] placeholder:text-gray-400"
+                />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              </div>
+
+              <StationaryCategoriesSection />
+            </>
+          )}
+
+          {activeTab === "customPrint" && (
+            <>
+              <div className="relative w-full mt-3 flex justify-center items-center">
+                <input
+                  type="text"
+                  placeholder="Search events by name or game title"
+                  className="w-full bg-gray-100 border border-gray-300 rounded-md pl-9 py-2 text-sm focus:outline-none focus:ring-1 focus:ring-[#5d3d72] focus:border-[#5d3d72] placeholder:text-gray-400"
+                />
+                <Search className="absolute left-3 top-3 w-4 h-4 text-gray-400" />
+              </div>
+
+              <CategoriesSection />
+            </>
           )}
 
           {activeTab === "stationary" ? (
