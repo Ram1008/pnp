@@ -48,7 +48,6 @@ const StationaryCategoriesSection = () => {
             <span
               key={category}
               className={`flex-shrink-0 px-3 py-0.5 rounded-[10px] text-[10px] border cursor-pointer bg-[#f0eef6] text-[#5d3d72] border-[#5d3d72] hover:bg-[#5d3d72] hover:text-white transition-colors`}
-              onClick={() => handleOpenCategory(category)}
             >
               {category}
             </span>

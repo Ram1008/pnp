@@ -2,6 +2,7 @@ const productData = [
   {
     id: 1,
     category: "Visiting Cards",
+    image: "/categories/visiting-cards.png",
     features: [
       "Custom printing available",
       "Premium quality",

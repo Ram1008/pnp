@@ -9,68 +9,66 @@ const Stationary = () => {
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
 
+    
+
   const stationaryItems = [
     {
-      title: "A4 Single Line Notebook",
+      title: "Notebooks",
       pages: "172-200 pages",
       image: "/notebook.png",
     },
     {
-      title: "A4 Single Line Notebook",
+      title: "Letterheads",
+      pages: "1 page",
+      image: "/notebook.png",
+    },
+    {
+      title: "Envelopes",
+      pages: "N/A",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "Diaries",
       pages: "250-300 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A4 Single Line Spiral Bound",
-      pages: "172-200 pages",
       image: "/spiral-notebook.png",
     },
     {
-      title: "A4 Single Line Spiral Bound",
+      title: "Writing Pads",
+      pages: "50-100 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "Certificates",
+      pages: "1 page",
+      image: "/notebook.png",
+    },
+    {
+      title: "ID Cards",
+      pages: "1 card",
+      image: "/notebook.png",
+    },
+    {
+      title: "Mouse Pads",
+      pages: "1 pad",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "Address Books",
+      pages: "100-150 pages",
+      image: "/spiral-notebook.png",
+    },
+    {
+      title: "Diaries",
       pages: "250-300 pages",
       image: "/spiral-notebook.png",
     },
     {
-      title: "A4 Unruled Spiral Bound",
-      pages: "100-150 pages",
+      title: "Business Cards",
+      pages: "1 card",
       image: "/spiral-notebook.png",
-    },
-    {
-      title: "Single Line Long Notebook",
-      pages: "172-200 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A5 Single Line Notebook",
-      pages: "100-150 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A5 Single Line Spiral Bound",
-      pages: "100-150 pages",
-      image: "/spiral-notebook.png",
-    },
-    {
-      title: "A4 Ruled Notebook",
-      pages: "150-200 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A5 Unruled Notebook",
-      pages: "100-150 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A4 Graph Notebook",
-      pages: "150-200 pages",
-      image: "/notebook.png",
-    },
-    {
-      title: "A5 Graph Notebook",
-      pages: "100-150 pages",
-      image: "/notebook.png",
     },
   ];
+
 
   useEffect(() => {
     const handleResize = () => {
@@ -130,7 +128,7 @@ const Stationary = () => {
       <div
         ref={scrollRef1}
         onScroll={checkArrows}
-        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        className="flex overflow-x-auto scrollbar-hide space-x-4 pt-2 px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {stationaryItems.slice(0, 6).map((item, index) => (
@@ -144,7 +142,7 @@ const Stationary = () => {
           >
             <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden ">
               <div className=" flex justify-center bg-[#C4BADF]">
-                <img src={item.image} alt="" className="h-[68px] object-contain" />
+                <img src={item.image} alt="" className="h-[60px] object-contain" />
               </div>
               <div className="pt-1 ">
                 <h4 className=" text-[10px] text-black text-center leading-3.5">
@@ -162,7 +160,7 @@ const Stationary = () => {
       {/* Second Row */}
       <div
         ref={scrollRef2}
-        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        className="flex overflow-x-auto scrollbar-hide space-x-4 pb-4 px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {stationaryItems.slice(6, 12).map((item, index) => (
@@ -176,7 +174,7 @@ const Stationary = () => {
           >
             <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden ">
               <div className="px-1 flex justify-center bg-[#C4BADF]">
-                <img src={item.image} alt="" className="h-[68px] object-contain" />
+                <img src={item.image} alt="" className="h-[60px] object-contain" />
               </div>
               <div className="p-1 border-t border-gray-100">
                 <h4 className="font-medium text-[10px] text-black text-center">

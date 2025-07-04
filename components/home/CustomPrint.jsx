@@ -1,7 +1,8 @@
 "use client";
-import React, { useRef, useState, useEffect } from "react";
 import { ChevronLeft, ChevronRight } from "lucide-react";
+import { useRef, useState, useEffect } from "react";
 import productData from "@/constants/productData";
+import CategoryDialogBox from "./CategoryDialogBox";
 
 const CustomPrint = () => {
   const scrollRef1 = useRef(null);
@@ -9,15 +10,21 @@ const CustomPrint = () => {
   const [showLeftArrow, setShowLeftArrow] = useState(false);
   const [showRightArrow, setShowRightArrow] = useState(true);
   const [isMobile, setIsMobile] = useState(false);
+  const [dialogOpen, setDialogOpen] = useState(false);
+  const [selectedCategory, setSelectedCategory] = useState(null);
+  const [selectedImage, setSelectedImage] = useState(null);
+  const [imagePreview, setImagePreview] = useState(null);
+  const [quantity, setQuantity] = useState("");
 
   // Get all items from all categories
   const allItems = productData.flatMap((category) =>
     category.items.map((item) => ({
       ...item,
       category: category.category,
+      categoryImage: category.image,
       image: `/custom-print/${item.name
         .toLowerCase()
-        .replace(/\s+/g, "-")}.png`, // Example image path
+        .replace(/\s+/g, "-")}.png`,
     }))
   );
 
@@ -27,9 +34,7 @@ const CustomPrint = () => {
       checkArrows();
     };
 
-    // Set initial value
     handleResize();
-
     window.addEventListener("resize", handleResize);
     return () => window.removeEventListener("resize", handleResize);
   }, []);
@@ -63,6 +68,65 @@ const CustomPrint = () => {
     }
   };
 
+  const handleItemClick = (item) => {
+    setSelectedCategory({
+      name: item.category,
+      image: item.categoryImage,
+    });
+    setDialogOpen(true);
+  };
+
+  const handleImageUpload = (e) => {
+    const file = e.target.files[0];
+    if (file) {
+      setSelectedImage(file);
+      const previewUrl = URL.createObjectURL(file);
+      setImagePreview(previewUrl);
+    }
+  };
+
+  const clearImage = () => {
+    setSelectedImage(null);
+    if (imagePreview) {
+      URL.revokeObjectURL(imagePreview);
+      setImagePreview(null);
+    }
+  };
+
+  const handleAddToCart = () => {
+    if (!selectedImage) {
+      console.error("Please upload an image first");
+      return;
+    }
+    if (!quantity) {
+      console.error("Please select a quantity");
+      return;
+    }
+
+    const existingCart = JSON.parse(localStorage.getItem("printCart") || "{}");
+    const newProduct = {
+      id: Date.now(),
+      name: selectedCategory.name,
+      price: 100,
+      quantity: parseInt(quantity),
+      image: imagePreview,
+      categoryImage: selectedCategory.image,
+    };
+
+    const updatedCart = {
+      ...existingCart,
+      products: [...(existingCart.products || []), newProduct],
+      totalAmount: (existingCart.totalAmount || 0) + 100 * parseInt(quantity),
+    };
+
+    localStorage.setItem("printCart", JSON.stringify(updatedCart));
+    console.log("Item added to cart!");
+    setDialogOpen(false);
+    setSelectedImage(null);
+    setImagePreview(null);
+    setQuantity("");
+  };
+
   return (
     <div className="relative">
       {/* Left Arrow - Only show on mobile */}
@@ -79,26 +143,27 @@ const CustomPrint = () => {
       <div
         ref={scrollRef1}
         onScroll={checkArrows}
-        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        className="flex overflow-x-auto scrollbar-hide space-x-4 pt-2 px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {allItems.slice(0, 6).map((item, index) => (
           <div
             key={index}
-            className="flex-shrink-0"
+            className="flex-shrink-0 cursor-pointer"
             style={{
               width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
               minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
             }}
+            onClick={() => handleItemClick(item)}
           >
             <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden">
               <div className="flex justify-center bg-[#C4BADF]">
                 <img
                   src={item.image || "/custom-print/default.png"}
                   alt={""}
-                  className="h-[68px] object-contain"
+                  className="h-[60px] object-contain"
                   onError={(e) => {
-                    e.target.src = "/custom-print/default.png"; // Fallback image
+                    e.target.src = "/custom-print/default.png";
                   }}
                 />
               </div>
@@ -106,9 +171,6 @@ const CustomPrint = () => {
                 <h4 className="text-[10px] text-black text-center leading-3.5">
                   {item.name}
                 </h4>
-                <p className="text-[10px] text-gray-500 text-center mt-1 leading-2">
-                  {item.category}
-                </p>
               </div>
             </div>
           </div>
@@ -118,26 +180,27 @@ const CustomPrint = () => {
       {/* Second Row */}
       <div
         ref={scrollRef2}
-        className="flex overflow-x-auto scrollbar-hide space-x-4 py-2 px-1"
+        className="flex overflow-x-auto scrollbar-hide space-x-4 pb-4 px-1"
         style={{ scrollbarWidth: "none", msOverflowStyle: "none" }}
       >
         {allItems.slice(6, 12).map((item, index) => (
           <div
             key={index}
-            className="flex-shrink-0"
+            className="flex-shrink-0 cursor-pointer"
             style={{
               width: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
               minWidth: isMobile ? "calc(25% - 12px)" : "calc(16.666% - 16px)",
             }}
+            onClick={() => handleItemClick(item)}
           >
             <div className="h-[120px] w-full bg-white rounded-lg overflow-hidden">
               <div className="px-1 flex justify-center bg-[#C4BADF]">
                 <img
                   src={item.image}
                   alt={""}
-                  className="h-[68px] object-contain"
+                  className="h-[60px] object-contain"
                   onError={(e) => {
-                    e.target.src = "/custom-print/default.png"; // Fallback image
+                    e.target.src = "/custom-print/default.png";
                   }}
                 />
               </div>
@@ -145,9 +208,6 @@ const CustomPrint = () => {
                 <h4 className="font-medium text-[10px] text-black text-center">
                   {item.name}
                 </h4>
-                <p className="text-[10px] text-gray-500 text-center">
-                  {item.category}
-                </p>
               </div>
             </div>
           </div>
@@ -163,6 +223,19 @@ const CustomPrint = () => {
           <ChevronRight className="w-5 h-5 text-[#5d3d72]" />
         </button>
       )}
+
+      <CategoryDialogBox
+        dialogOpen={dialogOpen}
+        setDialogOpen={setDialogOpen}
+        categoryImage={selectedCategory?.image}
+        imagePreview={imagePreview}
+        clearImage={clearImage}
+        handleImageUpload={handleImageUpload}
+        quantity={quantity}
+        setQuantity={setQuantity}
+        handleAddToCart={handleAddToCart}
+        selectedImage={selectedImage}
+      />
     </div>
   );
 };

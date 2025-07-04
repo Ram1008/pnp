@@ -61,15 +61,26 @@ const CartPage = () => {
             }
           }
 
+          // Ensure products have proper structure
+          const validatedProducts = (cartData.products || []).map(
+            (product) => ({
+              ...product,
+              id: product.id || Date.now() + Math.random(),
+              price: product.price || 100, // default price if not set
+              quantity: product.quantity || 1,
+              preview: product.preview || {
+                type: "image",
+                content: "Product Image",
+              },
+            })
+          );
+
           setCart({
             files: cartData.files || [],
-            products: cartData.products || [],
+            products: validatedProducts,
             totalAmount:
               cartData.totalAmount ||
-              calculateTotalAmount(
-                cartData.files || [],
-                cartData.products || []
-              ),
+              calculateTotalAmount(cartData.files || [], validatedProducts),
           });
         } catch (error) {
           console.error("Error parsing cart data:", error);
@@ -157,6 +168,27 @@ const CartPage = () => {
     });
   };
 
+  const handleProductIncrementQuantity = (productId) => {
+    setCart((prevCart) => {
+      const updatedProducts = prevCart.products.map((product) => {
+        if (product.id === productId) {
+          return {
+            ...product,
+            quantity: (product.quantity || 1) + 1,
+          };
+        }
+        return product;
+      });
+      const updatedCart = {
+        ...prevCart,
+        products: updatedProducts,
+        totalAmount: calculateTotalAmount(prevCart.files, updatedProducts),
+      };
+      localStorage.setItem("printCart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
   const handleDecrementQuantity = (fileId) => {
     setCart((prevCart) => {
       const updatedFiles = prevCart.files.map((file) => {
@@ -177,6 +209,27 @@ const CartPage = () => {
         ...prevCart,
         files: updatedFiles,
         totalAmount: calculateTotalAmount(updatedFiles, prevCart.products),
+      };
+      localStorage.setItem("printCart", JSON.stringify(updatedCart));
+      return updatedCart;
+    });
+  };
+
+  const handleProductDecrementQuantity = (productId) => {
+    setCart((prevCart) => {
+      const updatedProducts = prevCart.products.map((product) => {
+        if (product.id === productId && (product.quantity || 1) > 1) {
+          return {
+            ...product,
+            quantity: (product.quantity || 1) - 1,
+          };
+        }
+        return product;
+      });
+      const updatedCart = {
+        ...prevCart,
+        products: updatedProducts,
+        totalAmount: calculateTotalAmount(prevCart.files, updatedProducts),
       };
       localStorage.setItem("printCart", JSON.stringify(updatedCart));
       return updatedCart;
@@ -284,6 +337,8 @@ const CartPage = () => {
           setCustomizeFile={setCustomizeFile}
           onIncrement={handleIncrementQuantity}
           onDecrement={handleDecrementQuantity}
+          onProductIncrement={handleProductIncrementQuantity}
+          onProductDecrement={handleProductDecrementQuantity}
           onRemove={handleRemoveItem}
           onUpdateFile={updateFileInCart}
         />
